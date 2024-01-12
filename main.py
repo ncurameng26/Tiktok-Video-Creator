@@ -5,29 +5,21 @@ from moviepy.editor import *
 import pysrt
 from ibm_watson import TextToSpeechV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+import creds
 
-aai.settings.api_key = "787814c7ae3e49509eaca91f0036208d"
-WATSONAPIKEY = "wZrxdGeCCt28yY58MF2RAekdhfqTyYtG7TQHkGo-n5YT" 
-REDDITCLIENTID = "nCcZskCoIEu-tIrfYwb-gw"
-REDDITCLIENTSECRET = "dsXYyLoiVmfGbyvVyhGBuTQWn1dI-A"
-
-
+WATSONURL = creds.WATSONURLCRED #DONT CHANGE
+WATSONAPIKEY =  creds.WATSONAPIKEYCRED#make this your watson api
+aai.settings.api_key = creds.AAISETTINGS
+REDDITCLIENTID = creds.REDDITCLIENTIDCRED   #make this your reddit client
+REDDITCLIENTSECRET = creds.REDDITCLIENTSECRETCRED #make this your reddit secret
+VIDEOFILE = "" #make this your video file path
 NUMBEROFPOSTS = 1
 
-VIDEOFILENAMELIST = ["mastervidfinal.mp4", "subwayvideo.mp4"]
-
-
-WATSONURL = 'https://api.us-east.text-to-speech.watson.cloud.ibm.com/instances/98d1d0e9-2c22-41d3-97af-ae76a09b1b39'
-
-
-voiceoverDirectory = "Voiceovers"
-
- 
 def clipMasterVideo(listSize, timeArray):
     for x in range(listSize):
         startTime = int(timeArray[x][0])
         endTime = int(timeArray[x][1])
-        current_video = VideoFileClip(VIDEOFILENAMELIST[1]).subclip(startTime, endTime).without_audio()
+        current_video = VideoFileClip("mastervideo.mp4").subclip(startTime, endTime).without_audio()
         current_audio = AudioFileClip("audio" + str(x) + ".mp3")
         new_audioclip = CompositeAudioClip([current_audio])
         current_video.audio = new_audioclip
@@ -124,7 +116,7 @@ def create_subtitles_clips(subtitles, videosize, fontsize = 24, font = "Arial", 
     return subtitle_clips
 
 def main():
-
+    # print(redditScrape())
     count = newtts(redditScrape())
     transcriberTool(count)
     clipMasterVideo(count, getTimes(count))
